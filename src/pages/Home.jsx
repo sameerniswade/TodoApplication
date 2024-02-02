@@ -34,13 +34,31 @@ function Home() {
     console.log(data);
   };
   const [todos, setTodos] = useState([]);
+  const [hoverId, setHoverId] = useState("");
   useEffect(() => {
     fetch("https://dummyjson.com/todos")
       .then((res) => res.json())
-      .then((data) => setTodos(data.todos));
+      .then((data) => {
+        console.log(data);
+        setTodos(data.todos);
+      });
   }, []);
 
-  console.log(todos);
+  const handleHover = (id) => {
+    setHoverId(id);
+  };
+
+  const handleEdit = (e) => {
+    console.log("edit", e);
+  };
+  const handleDelete = (e) => {
+    console.log("Delete", e);
+  };
+
+  const handleComplete = (e) => {
+    console.log("complete", e);
+  };
+  console.log("todos", todos);
   return (
     <Card className="w-2/3">
       <CardHeader className="flex justify-start items-baseline">
@@ -62,12 +80,19 @@ function Home() {
               return (
                 <Table>
                   <TableBody>
-                    <TableRow>
-                      <TableCell className="font-medium">INV001</TableCell>
-                      <TableCell>Paid</TableCell>
-                      <TableCell>Credit Card</TableCell>
-                      <TableCell className="text-right">$250.00</TableCell>
-                    </TableRow>
+                    {todos.map((todo) => {
+                      return (
+                        <TableRow>
+                          <TableCell
+                            className="font-medium"
+                            onMouseEnter={() => handleHover(todo.id)}
+                            onMouseLeave={() => handleHover("")}
+                          >
+                            {todo.id == hoverId ? <h1>hello</h1> : todo.todo}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               );
