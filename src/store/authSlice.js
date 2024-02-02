@@ -1,7 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { useDispatch } from "react-redux";
+import { setTodos } from "./todoSlice";
 
+const dispatch = useDispatch();
 const initialState = {
-  status: false,
+  isLogin: true,
   userdata: null,
 };
 const authSlice = createSlice({
@@ -11,6 +14,7 @@ const authSlice = createSlice({
     login: (state, action) => {
       state.status = true;
       state.userdata = action.payload.userdata;
+      dispatch(setTodos(action.payload.todos));
     },
     logout: (state) => {
       state.status = false;
