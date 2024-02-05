@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import todos from "./test";
+import { getTodos } from "./test";
+import { set } from "react-hook-form";
+
 const initialState = {
   todos: [],
 };
@@ -7,27 +9,43 @@ const todoSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setTodos: (state, action) => {
-      state.todos = todos;
-      // state.todos = action.payload;
-    },
     addTodo: (state, action) => {
-      state.todos = state.todos.push(action.payload.todo);
+      state.todos.push(action.payload);
+    },
+    complateTodo: (state, action) => {
+      let s = state.todos.map((todo) => {
+        if (todo.id == action.payload) {
+          if (todo.completed == true) {
+            todo.completed = false;
+            return todo;
+          } else {
+            todo.completed = true;
+            return todo;
+          }
+        } else {
+          return todo;
+        }
+      });
+
+      console.log(s);
     },
     deleteTodo: (state, action) => {
       state.todos = state.todos.filter((todo) =>
-        todo.id == action.payload.id ? null : todo
+        todo.id == action.payload ? null : todo
       );
     },
     editTodo: (state, action) => {
-      state.todos = state.todos.map((todo) => {
-        return todo.id == action.payload.id
-          ? (todo.todo = action.payload.text)
-          : todo;
+      state.todos.map((todo) => {
+        if (todo.id == action.payload.id) {
+          return (todo.todo = action.payload.text);
+        } else {
+          return todo;
+        }
       });
     },
   },
 });
 
-export const { setTodos, addTodo, deleteTodo, editTodo } = todoSlice.actions;
+export const { addTodo, deleteTodo, editTodo, complateTodo } =
+  todoSlice.actions;
 export default todoSlice.reducer;

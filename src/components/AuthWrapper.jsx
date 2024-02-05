@@ -16,7 +16,7 @@ import {
 function AuthWrapper({ children }) {
   // const navigate = useNavigate();
   const isLogin = useSelector((state) => state.authSlice.isLogin);
-  console.log(isLogin);
+
   return isLogin ? (
     children
   ) : (

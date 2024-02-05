@@ -5,6 +5,16 @@ import { useForm } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AuthWrapper } from "../components";
+import { useSelector, useDispatch } from "react-redux";
+import { InputDialog } from "../components/index";
+import {
+  addTodo,
+  deleteTodo,
+  editTodo,
+  complateTodo,
+} from "../store/todoSlice";
+import { v4 as uuid } from "uuid";
+
 import {
   Card,
   CardContent,
@@ -16,29 +26,38 @@ import {
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 
 function Home() {
-  const { register, handleSubmit } = useForm();
+  const dispatch = useDispatch();
 
+  const { register, handleSubmit, reset } = useForm();
+  const todos = useSelector((state) => state.todoSlice.todos);
   const handleAddTask = (data) => {
-    console.log(data);
+    let todo = {
+      id: uuid(),
+      todo: data.todo,
+      completed: false,
+    };
+
+    dispatch(addTodo(todo));
+    reset();
   };
-  const [todos, setTodos] = useState([]);
+
   const [hoverId, setHoverId] = useState("");
 
   const handleHover = (id) => {
     setHoverId(id);
   };
 
-  const handleEdit = (e) => {
-    console.log("edit", e);
+  const handleEdit = (id, todo) => {
+    dispatch(editTodo({ id: id, text: "todo" }));
   };
-  const handleDelete = (e) => {
-    console.log("Delete", e);
+  const handleDelete = (id) => {
+    dispatch(deleteTodo(id));
   };
 
-  const handleComplete = (e) => {
-    console.log("complete", e);
+  const handleComplete = (id) => {
+    dispatch(complateTodo(id));
   };
-  console.log("todos", todos);
+
   return (
     <AuthWrapper>
       <Card className="w-2/3">
@@ -57,46 +76,52 @@ function Home() {
 
           <ScrollArea className="w-full h-80 rounded-md border ">
             <div className="flex flex-col justify-center items-baseline ">
-              {todos.map((todo) => {
+              {todos?.map((todo) => {
                 return (
-                  <Table>
+                  <Table key={todo.id}>
                     <TableBody>
-                      {todos.map((todo) => {
-                        return (
-                          <TableRow>
-                            <TableCell
-                              className="font-medium"
-                              onMouseEnter={() => handleHover(todo.id)}
-                              onMouseLeave={() => handleHover("")}
-                            >
-                              {todo.id == hoverId ? (
-                                <div className="flex justify-between items-center gap-3">
-                                  <p>{todo.todo}</p>
-                                  <div className="flex justify-center items-center gap-2">
-                                    <Button
-                                      onClick={() => handleDelete(todo.id)}
-                                    >
-                                      Complete
-                                    </Button>
-                                    <Button
-                                      onClick={() => handleDelete(todo.id)}
-                                    >
-                                      Edit
-                                    </Button>
-                                    <Button
-                                      onClick={() => handleDelete(todo.id)}
-                                    >
-                                      Delete
-                                    </Button>
-                                  </div>
-                                </div>
-                              ) : (
-                                <p>{todo.todo}</p>
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
+                      <TableRow>
+                        <TableCell
+                          className="font-medium"
+                          onMouseEnter={() => handleHover(todo.id)}
+                          onMouseLeave={() => handleHover("")}
+                        >
+                          {todo.id == hoverId ? (
+                            <div className="flex justify-between items-center gap-3">
+                              <p
+                                className={todo.completed ? "line-through" : ""}
+                              >
+                                {todo.todo}
+                              </p>
+                              <div className="flex justify-center items-center gap-2">
+                                <Button
+                                  variant="outline"
+                                  onClick={() => handleComplete(todo.id)}
+                                >
+                                  {todo.completed == true
+                                    ? "Incomplete"
+                                    : "Complete"}
+                                </Button>
+                                <InputDialog
+                                  handleEdit={handleEdit}
+                                  todo={todo}
+                                />
+
+                                <Button
+                                  variant="outline"
+                                  onClick={() => handleDelete(todo.id)}
+                                >
+                                  Delete
+                                </Button>
+                              </div>
+                            </div>
+                          ) : (
+                            <p className={todo.completed ? "line-through" : ""}>
+                              {todo.todo}
+                            </p>
+                          )}
+                        </TableCell>
+                      </TableRow>
                     </TableBody>
                   </Table>
                 );

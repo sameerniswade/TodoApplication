@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 
-const [todos, setTodos] = useState([]);
-useEffect(() => {
-  fetch("https://dummyjson.com/todos")
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-      setTodos(data.todos);
-    });
-}, []);
+export const getTodos = () => {
+  const [todos, setTodos] = useState();
 
-export default todos;
+  useEffect(() => {
+    fetch("https://dummyjson.com/todos")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setTodos(data.todos);
+      });
+  }, []);
+  return todos;
+};
