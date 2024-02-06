@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getTodos } from "./test";
+
 import { set } from "react-hook-form";
 
 const initialState = {

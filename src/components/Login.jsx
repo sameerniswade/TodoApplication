@@ -12,7 +12,8 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
+import { useDispatch } from "react-redux";
+import { login } from "../store/authSlice";
 function Login() {
   const {
     register,
@@ -20,9 +21,9 @@ function Login() {
     watch,
     formState: { errors },
   } = useForm();
-
+  const dispatch = useDispatch();
   const handleLogin = (data) => {
-    console.log(data);
+    dispatch(login(data));
   };
   return (
     <form onSubmit={handleSubmit(handleLogin)}>

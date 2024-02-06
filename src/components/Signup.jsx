@@ -1,6 +1,8 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { useDispatch } from "react-redux";
+import { signup } from "../store/authSlice";
 import {
   Card,
   CardContent,
@@ -19,9 +21,9 @@ function Signup() {
     watch,
     formState: { errors },
   } = useForm();
-
+  const dispatch = useDispatch();
   const handleSignup = (data) => {
-    console.log(data);
+    dispatch(signup(data));
   };
   return (
     <form onSubmit={handleSubmit(handleSignup)}>

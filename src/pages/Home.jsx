@@ -30,6 +30,7 @@ function Home() {
 
   const { register, handleSubmit, reset } = useForm();
   const todos = useSelector((state) => state.todoSlice.todos);
+
   const handleAddTask = (data) => {
     let todo = {
       id: uuid(),
@@ -40,8 +41,6 @@ function Home() {
     dispatch(addTodo(todo));
     reset();
   };
-
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [hoverId, setHoverId] = useState("");
 
