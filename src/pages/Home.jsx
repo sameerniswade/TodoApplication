@@ -63,9 +63,16 @@ function Home() {
   return (
     <AuthWrapper>
       <Card className="w-2/3">
-        <CardHeader className="flex justify-start items-baseline">
-          <CardTitle>Welcome Back, Aman</CardTitle>
-          <CardDescription>Here is your task list.</CardDescription>
+        <CardHeader>
+          <div className="flex justify-between ">
+            <div className="flex flex-col items-start gap-2">
+              <CardTitle>Welcome Back, Aman</CardTitle>
+              <CardDescription>Here is your task list.</CardDescription>
+            </div>
+            <Button variant="outline" className="w-[86px]">
+              Logout
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <form
@@ -73,7 +80,9 @@ function Home() {
             className="flex justify-center items-center gap-3 mb-5"
           >
             <Input {...register("todo", { required: true })} />
-            <Button className="w-1/5">Add</Button>
+            <Button variant="outline" className="w-1/5">
+              Add
+            </Button>
           </form>
 
           <ScrollArea className="w-full h-80 rounded-md border ">
