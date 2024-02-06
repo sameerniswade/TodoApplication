@@ -41,6 +41,8 @@ function Home() {
     reset();
   };
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const [hoverId, setHoverId] = useState("");
 
   const handleHover = (id) => {
@@ -48,7 +50,7 @@ function Home() {
   };
 
   const handleEdit = (id, todo) => {
-    dispatch(editTodo({ id: id, text: "todo" }));
+    dispatch(editTodo({ id: id, text: todo }));
   };
   const handleDelete = (id) => {
     dispatch(deleteTodo(id));
