@@ -11,25 +11,39 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     signup: (state, action) => {
-      const { name, email, password } = action.payload;
       authServices
         .createAccount({
-          email: email,
-          password: password,
-          name: name,
+          email: action.payload.email,
+          password: action.payload.password,
+          name: action.payload.name,
+        })
+        .then(
+          (res) => {
+            console.log("res", res);
+          },
+          (rej) => {
+            console.log("rej", rej);
+            // state.errorMessage = rej.message;
+          }
+        );
+    },
+
+    login: (state, action) => {
+      const d = authServices
+        .login({
+          email: action.payload.email,
+          password: action.payload.password,
         })
         .then(
           (res) => {
             state.userdata = res;
+            state.isLogin = true;
           },
-          (rej) => (state.errorMessage = rej.message)
+          (rej) => {
+            console.log("rej", rej);
+            // state.errorMessage = rej.message;
+          }
         );
-    },
-
-    login: async (state, action) => {
-      let a = await loginCH(action.payload.email, action.payload.password);
-
-      console.log("a", a);
     },
     logout: (state) => {
       state.status = false;
