@@ -1,8 +1,8 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { useDispatch } from "react-redux";
-import { signup } from "../store/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserData, setErrorMessage } from "../store/authSlice";
 import {
   Card,
   CardContent,
@@ -14,16 +14,20 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import authServices from "../appwrite/auth";
 function Signup() {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm();
   const dispatch = useDispatch();
+  const errorMessage = useSelector((state) => state.authSlice.errorMessage);
   const handleSignup = (data) => {
-    dispatch(signup(data));
+    authServices.createAccount(data).then(
+      (res) => dispatch(setUserData(res)),
+      (rej) => dispatch(setErrorMessage(rej.message))
+    );
   };
   return (
     <form onSubmit={handleSubmit(handleSignup)}>
@@ -78,6 +82,9 @@ function Signup() {
               })}
             />
           </div>
+          {errorMessage && (
+            <Label className="text-red-400">{errorMessage}</Label>
+          )}
         </CardContent>
         <CardFooter className="flex justify-center item-center">
           <Button type="submit">Signup</Button>

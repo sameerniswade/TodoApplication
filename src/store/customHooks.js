@@ -1,7 +1,10 @@
 import authServices from "../appwrite/auth";
 
-export const loginCH = async (email, password) => {
-  return await authServices.login({ email: email, password: password });
+export const loginCH = (email, password) => {
+  authServices.login({ email: email, password: password }).then(
+    (res) => res,
+    (rej) => rej.message
+  );
 };
 
 export const signupCH = (email, password, name) => {
