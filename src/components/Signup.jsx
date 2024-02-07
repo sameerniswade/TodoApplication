@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import authServices from "../appwrite/auth";
+import { useNavigate } from "react-router-dom";
 function Signup() {
   const {
     register,
@@ -23,9 +24,15 @@ function Signup() {
   } = useForm();
   const dispatch = useDispatch();
   const errorMessage = useSelector((state) => state.authSlice.errorMessage);
+  const navigate = useNavigate();
   const handleSignup = (data) => {
     authServices.createAccount(data).then(
-      (res) => dispatch(setUserData(res)),
+      (res) => {
+        if (res) {
+          dispatch(setUserData(authServices.account.get()));
+          navigate("/home");
+        }
+      },
       (rej) => dispatch(setErrorMessage(rej.message))
     );
   };

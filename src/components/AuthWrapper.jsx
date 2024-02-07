@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 function AuthWrapper({ children }) {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const isLogin = useSelector((state) => state.authSlice.isLogin);
 
   return isLogin ? (
@@ -28,7 +28,7 @@ function AuthWrapper({ children }) {
           <AlertDialogDescription></AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogAction onClick={() => console.log("add navigate here")}>
+          <AlertDialogAction onClick={() => navigate("/")}>
             Login
           </AlertDialogAction>
         </AlertDialogFooter>

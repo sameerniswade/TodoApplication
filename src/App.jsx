@@ -11,7 +11,7 @@ function App() {
   console.log("STATE", state);
   return (
     <div className="flex justify-center items-center">
-      <Authentication />
+      <Home />
     </div>
   );
 }

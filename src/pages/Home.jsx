@@ -7,12 +7,16 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { AuthWrapper } from "../components";
 import { useSelector, useDispatch } from "react-redux";
 import { InputDialog } from "../components/index";
+import { useNavigate } from "react-router-dom";
+import services from "../appwrite/config";
+
 import {
   addTodo,
   deleteTodo,
   editTodo,
   complateTodo,
 } from "../store/todoSlice";
+import { logout } from "../store/authSlice";
 import { v4 as uuid } from "uuid";
 
 import {
@@ -25,13 +29,17 @@ import {
 } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 
+import authServices from "../appwrite/auth";
+
 function Home() {
   const dispatch = useDispatch();
-
+  const userData = useSelector((state) => state.authSlice.userdata);
   const { register, handleSubmit, reset } = useForm();
   const todos = useSelector((state) => state.todoSlice.todos);
+  const [hoverId, setHoverId] = useState("");
+  const navigate = useNavigate();
 
-  const handleAddTask = (data) => {
+  const handleAddTodo = (data) => {
     let todo = {
       id: uuid(),
       todo: data.todo,
@@ -39,10 +47,17 @@ function Home() {
     };
 
     dispatch(addTodo(todo));
+    services.addTodo(todo.todo, todo.completed, todo.id, userData.$id).then(
+      (res) => {
+        console.log("resaddTodo", res);
+      },
+      (rej) => {
+        console.log("rejAddTodo", rej);
+      }
+    );
+
     reset();
   };
-
-  const [hoverId, setHoverId] = useState("");
 
   const handleHover = (id) => {
     setHoverId(id);
@@ -59,23 +74,54 @@ function Home() {
     dispatch(complateTodo(id));
   };
 
+  const handleLogout = () => {
+    authServices.logout().then(
+      (res) => {
+        navigate("/");
+        dispatch(logout());
+      },
+      (rej) => {
+        console.log("logout", rej);
+      }
+    );
+  };
+
+  useEffect(() => {
+    services.getTodo(userData.$id).then(
+      (res) => {
+        console.log("gettodoRes", res);
+      },
+      (rej) => {
+        console.log("getTodorej", rej);
+      }
+    );
+  }, []);
+
   return (
     <AuthWrapper>
       <Card className="w-2/3">
         <CardHeader>
           <div className="flex justify-between ">
             <div className="flex flex-col items-start gap-2">
-              <CardTitle>Welcome Back, Aman</CardTitle>
-              <CardDescription>Here is your task list.</CardDescription>
+              <CardTitle>
+                Welcome Back,{" "}
+                {/* {userData?.name.charAt(0).toUpperCase() +
+                  userData.name.slice(1)} */}
+              </CardTitle>
+              <CardDescription>Here is your todo list.</CardDescription>
             </div>
-            <Button variant="outline" className="w-[86px]">
+            <Button
+              variant="outline"
+              className="w-[86px]"
+              onClick={handleLogout}
+            >
               Logout
             </Button>
           </div>
         </CardHeader>
         <CardContent>
           <form
-            onSubmit={handleSubmit(handleAddTask)}
+            onSubmit={handleSubmit(handleAddTodo)}
             className="flex justify-center items-center gap-3 mb-5"
           >
             <Input {...register("todo", { required: true })} />

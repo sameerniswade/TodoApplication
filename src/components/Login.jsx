@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserData, setErrorMessage } from "../store/authSlice";
 import authServices from "../appwrite/auth";
+import { useNavigate } from "react-router-dom";
 function Login() {
   const {
     register,
@@ -22,14 +23,29 @@ function Login() {
     watch,
     formState: { errors },
   } = useForm();
+  const navigate = useNavigate();
   const errorMessage = useSelector((state) => state.authSlice.errorMessage);
   const dispatch = useDispatch();
+
   const handleLogin = (data) => {
     authServices.login(data).then(
-      (res) => dispatch(setUserData(res)),
+      (res) => {
+        if (res) {
+          authServices.getUser().then(
+            (res) => {
+              dispatch(setUserData(res));
+              navigate("/home");
+            },
+            (rej) => {
+              console.log("rejGetUser", rej);
+            }
+          );
+        }
+      },
       (rej) => dispatch(setErrorMessage(rej.message))
     );
   };
+
   console.log("error", errorMessage);
   return (
     <form onSubmit={handleSubmit(handleLogin)}>

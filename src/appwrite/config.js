@@ -1,5 +1,6 @@
-import { Databases, Client, Storage, Query } from "appwrite";
+import { Databases, Client, Storage, Query, ID } from "appwrite";
 import conf from "../conf/conf";
+import { deleteTodo } from "../store/todoSlice";
 
 export class Services {
   client = new Client();
@@ -13,97 +14,40 @@ export class Services {
     this.bucket = new Storage(this.client);
   }
 
-  async createPost({ title, slug, content, featureImage, status, userid }) {
+  async getTodo(id) {
+    console.log("getTodoServices", id);
+    try {
+      return await this.databases.listDocuments(
+        conf.appWriteDatabaseId,
+        conf.appWriteCollectionId,
+        [Query.equal("userId", id)]
+      );
+    } catch (error) {
+      console.log("appwrite config :: getTodo :: error", error);
+    }
+  }
+
+  async addTodo(todo, complate, id, userId) {
     try {
       return await this.databases.createDocument(
         conf.appWriteDatabaseId,
         conf.appWriteCollectionId,
-        slug,
-        { title, content, featureImage, status, userid }
-      );
-    } catch (error) {
-      console.log("config :: createpost :: error", error);
-    }
-  }
-
-  async updatePost({ title, slug, content, featureImage, status, userid }) {
-    try {
-      return await this.databases.updateDocument(
-        conf.appWriteDatabaseId,
-        conf.appWriteCollectionId,
-        slug,
+        ID.unique(),
         {
-          title,
-          content,
-          featureImage,
-          status,
+          task: todo,
+          complete: complate,
+          id: id,
+          userId: userId,
         }
       );
     } catch (error) {
-      console.log("config :: updatePost :: error", error);
+      console.log("appwrite config :: getTodo :: error", error);
     }
   }
+  async updateTodo() {}
+  async deleteTodo() {}
 
-  async deletePost(slug) {
-    try {
-      await this.databases.deleteDocument(
-        conf.appWriteDatabaseId,
-        conf.appWriteCollectionId,
-        slug
-      );
-      return true;
-    } catch (error) {
-      console.log("config :: deletePost :: error", error);
-      return false;
-    }
-  }
-
-  async getPost(slug) {
-    try {
-      await this.databases.getDocument(
-        conf.appWriteDatabaseId,
-        conf.appWriteCollectionId,
-        slug
-      );
-    } catch (error) {
-      console.log("config :: getPost :: error", error);
-    }
-  }
-
-  async getPosts() {
-    try {
-      await this.databases.listDocuments(
-        conf.appWriteDatabaseId,
-        conf.appWriteCollectionId,
-        [Query.equal("status", "active")]
-      );
-    } catch (error) {
-      console.log("config :: getPost :: error", error);
-    }
-  }
-
-  async uploadFile(file) {
-    try {
-      await this.bucket.createFile(conf.appWriteBucketId, ID.userid(), file);
-    } catch (error) {
-      console.log("config :: uploadFile :: error", error);
-      return false;
-    }
-  }
-
-  async deleteFile(fileId) {
-    try {
-      await this.bucket.deleteFile(conf.appWriteBucketId, fileId);
-      return true;
-    } catch (error) {
-      console.log("config :: deleteFile :: error", error);
-      return false;
-    }
-  }
-
-  getFilePreview() {
-    return this.bucket.getFilePreview(conf.appWriteBucketId, fileId);
-  }
+  async complateTodo() {}
 }
 
 const services = new Services();
